@@ -1,35 +1,32 @@
-import js from '@eslint/js';
-import globals from 'globals';
-import { defineConfig } from 'eslint/config';
-import eslintPluginUnicorn from 'eslint-plugin-unicorn';
+import js from "@eslint/js";
+import globals from "globals";
+import tseslint from "@typescript-eslint/eslint-plugin";
+import tsParser from "@typescript-eslint/parser";
 
-export default defineConfig([
-    {
-        files: ['**/*.{js,mjs,cjs}'],
-        plugins: { js, unicorn: eslintPluginUnicorn },
-        extends: ['js/recommended'],
-        languageOptions: { 
-            ecmaVersion: "latest",
-			sourceType: "module",
-            globals: globals.browser 
-        },
-        rules: {
-            // eslint base rules
-            'no-lonely-if': 'error',
-            eqeqeq: 'error',
-            'prefer-const': 'error',
-            'no-var': 'error',
-            'prefer-template': 'error',
-            'prefer-arrow-callback': 'error',
-            'no-unused-vars': 'warn',
-            'consistent-return': 'off',
-
-            // unicorn
-            'unicorn/consistent-destructuring': 'error',
-            'unicorn/error-message': 'error',
-            'unicorn/no-abusive-eslint-disable': 'error',
-            'unicorn/no-lonely-if': 'error',
-            'unicorn/prefer-ternary': 'error',
-        },
+export default [
+  // JS/TS general rules
+  {
+    files: ["src/**/*.ts"],
+    languageOptions: {
+      parser: tsParser,
+      ecmaVersion: "latest",
+      sourceType: "module",
+      globals: globals.node,
     },
-]);
+    plugins: {
+      "@typescript-eslint": tseslint,
+    },
+    rules: {
+      // Bring in recommended JS rules
+      ...js.configs.recommended.rules,
+
+      // Bring in recommended TS rules
+      ...tseslint.configs.recommended.rules,
+
+      // Overrides
+      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-explicit-any": "off",
+      "no-undef": "off"
+    },
+  },
+];
